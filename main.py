@@ -10,10 +10,10 @@ PaletteDBPath = script_directory / 'palettes.json'
 Task = 'Mask'
 
 ##==Config (Quantize)==##
-QuantizeToPalette = True ##If True, Manually set the colors of the stain
+QuantizeToPalette = False ##If True, Manually set the colors of the stain
     ##If QuantizeToPalette is False: (Auto)
-ColorAmount = 10
-QuantizeAlgorithm = 2 ##0(Median Cut) / 1(Maximum Coverage) / 2(Fast Octree)
+ColorAmount = 4
+QuantizeAlgorithm = 1 ##0(Median Cut) / 1(Maximum Coverage) / 2(Fast Octree)
     ##If QuantizeToPalette is True: (Manual)
 StainType = "H&E" ##Check palette.json
 
@@ -30,6 +30,8 @@ if QuantizeToPalette == True:
     stain_info = StainDB[StainType]
     custom_palette = stain_info['palette']
     color_names = stain_info['color_names']
+else:
+    custom_palette= 0
 output, imgquantized = analyze_image_colors(ImagePath,ColorAmount,QuantizeAlgorithm,QuantizeToPalette,custom_palette)
 print(output)
 if Task == 'Colorplot':
