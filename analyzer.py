@@ -2,13 +2,30 @@ from PIL import Image
 from collections import Counter
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 from IPython.display import display
 
-def analyze_image_colors(image_path, num_colors, qalgo): ## Find most prevalent colors & their %
+def load_stain_database(db_path="D:\Coding\multiplexthingy\Histology-Analyzer\palette.json"):
+    try:
+        with open(db_path, 'r') as f:
+            stain_database = json.load(f)
+        print(f"Successfully loaded stain database from '{db_path}'.")
+        return stain_database
+    except FileNotFoundError:
+        print(f"Error: Database file not found at '{db_path}'.")
+        return None
+    except json.JSONDecodeError:
+        print(f"Error: Could not parse '{db_path}'. Please check if it is a valid JSON file.")
+        return None
+
+def analyze_image_colors(image_path, num_colors, qalgo, palettebool, custom_palette): ## Find most prevalent colors & their %
     try:
         img = Image.open(image_path) 
-        img = img.convert("RGB") 
-        imgquantized = img.quantize(colors=num_colors, method=qalgo) ##Quantization
+        img = img.convert("RGB")
+        if palettebool and custom_palette:
+            imgquantized = quantize_to_palette(img, custom_palette)
+        else:
+            imgquantized = img.quantize(colors=num_colors, method=qalgo) ##Auto Quantization
         totalpixel = imgquantized.size[0]*imgquantized.size[1]
         plt.imshow(imgquantized)
         plt.title("Quantized Image")
@@ -30,6 +47,13 @@ def analyze_image_colors(image_path, num_colors, qalgo): ## Find most prevalent 
     except Exception as e:
         print (f"An exception has occurred: {e}")
         return None
+    
+def quantize_to_palette(img, custom_palette):
+    palette_dummy = Image.new("P", (1, 1)) ##Create dummy to hold palette
+    flat_palette = [value for color in custom_palette for value in color]
+    palette_dummy.putpalette(flat_palette) ##Put palette in dummy
+    imgquantized = img.convert("RGB").quantize(palette=palette_dummy, dither=Image.Dither.NONE)
+    return imgquantized
 
 def colorplot(colordata):
     if not colordata:
@@ -59,7 +83,7 @@ def colorplot(colordata):
 def masks(imgquantized, color_index):
     image_array = np.array(imgquantized)
     mask = (image_array == color_index) ##Creates a bool mask where entry n = true if image_array[n]==color_index[n]
-    mask_array = (mask * 255).astype('uint8') ##true*255=255 this is poggers
+    mask_array = (mask * 255).astype('uint8') ##true*255=255 this is so poggers
     mask_image = Image.fromarray(mask_array, mode='L') ##L=8bit greyscale; +(255,255,255) -(0,0,0)
     plt.imshow(mask_image, cmap='gray')
     plt.title(f"Image Mask for Color Index '{color_index}'")

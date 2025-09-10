@@ -1,0 +1,46 @@
+{
+  "H&E": {
+    "name": "Hematoxylin and Eosin",
+    "description": "Standard stain for visualizing nuclei and cytoplasm.",
+    "palette": [
+      [110, 50, 125],
+      [215, 80, 150],
+      [255, 255, 255]
+    ],
+    "color_names": [
+      "Hematoxylin (Nuclei)",
+      "Eosin (Cytoplasm)",
+      "Background"
+    ]
+  },
+  "Gram Stain": {
+    "name": "Gram Stain",
+    "description": "Differentiates bacteria into Gram-positive and Gram-negative.",
+    "palette": [
+      [85, 40, 130],
+      [220, 80, 130],
+      [255, 255, 255]
+    ],
+    "color_names": [
+      "Gram-Positive (Purple)",
+      "Gram-Negative (Pink/Red)",
+      "Background"
+    ]
+  },
+  "Masson's Trichrome": {
+    "name": "Masson's Trichrome Stain",
+    "description": "Highlights collagen fibers in connective tissue.",
+    "palette": [
+      [30, 30, 80],
+      [180, 40, 60],
+      [40, 120, 180],
+      [255, 255, 255]
+    ],
+    "color_names": [
+      "Nuclei (Black/Dark Blue)",
+      "Cytoplasm/Muscle (Red)",
+      "Collagen (Blue)",
+      "Background"
+    ]
+  }
+}
