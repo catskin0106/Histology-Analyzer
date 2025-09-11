@@ -5,7 +5,7 @@ import numpy as np
 import json
 from IPython.display import display
 
-def load_stain_database(db_path="D:\Coding\multiplexthingy\Histology-Analyzer\palette.json"):
+def load_stain_database(db_path):
     try:
         with open(db_path, 'r') as f:
             stain_database = json.load(f)
