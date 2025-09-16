@@ -8,23 +8,28 @@ script_directory = Path(__file__).resolve().parent
 
 ImagePath = script_directory / 'Images' / 'image.png'
 PaletteDBPath = script_directory / 'palette.json'
-Task = 'Mask'
+Task = 'DensityMap'
 
 ##==Config (Quantize)==##
 
 QuantizeToPalette = True ##False=AUTO PALETTE / True=MANUAL PALETTE
 SaveColorPlotImage = False
 SavePathColorPlot = ''
-    ##If QuantizeToPalette is False: (Auto)
+    ##If QuantizeToPalette is False / AUTO
 ColorAmount = 4
 QuantizeAlgorithm = 1 ##0(Median Cut) / 1(Maximum Coverage) / 2(Fast Octree)
-    ##If QuantizeToPalette is True: (Manual)
+    ##If QuantizeToPalette is True / MANUAL
 StainType = "H&E" ##Check palette.json
 
 ##==Config (Mask)==##
 
 SaveMaskImage = False
 SavePathMask = '' ##Configure the Directory of the saved image
+
+##==Config (DensityMap)==##
+
+KernelSize = 37 ##Must be a Positive Odd Integer
+Alpha = 0.8 ## Opacity of Heatmap above Original Image
 
 ##==========##
 
@@ -42,11 +47,13 @@ output, imgquantized = analyze_image_colors(ImagePath,ColorAmount,QuantizeAlgori
 print(output)
 if Task == 'Colorplot':
     colorplot(output)
-if Task == 'Mask':
+if Task == 'Mask' or Task == 'DensityMap':
     colorplot(output)
     print("Type in the index of the color to be masked:")
     if QuantizeToPalette == True:
         color_index=int(input("Index: Order of Color in palette.json (Start from 0)"))
     else:
         color_index=int(input("Index: Order of Color from the Color Plot (Start from 0)"))
-    masks(imgquantized,color_index)
+    mask_image = masks(imgquantized,color_index)
+    if Task == 'DensityMap':
+        heatmap(ImagePath, mask_image, KernelSize, Alpha)

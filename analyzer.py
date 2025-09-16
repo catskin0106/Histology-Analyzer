@@ -3,6 +3,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import numpy as np
 import json
+import cv2
 from IPython.display import display
 
 def load_stain_database(db_path):
@@ -89,3 +90,16 @@ def masks(imgquantized, color_index):
     plt.title(f"Image Mask for Color Index '{color_index}'")
     plt.show()
     return mask_image
+
+def heatmap(ImagePath,mask_image,kernel_size,alpha):
+    mask_cv = np.array(mask_image)
+    density_map_grey = cv2.GaussianBlur(mask_cv, (kernel_size,kernel_size), 0)
+    heatmap = cv2.applyColorMap(density_map_grey, cv2.COLORMAP_INFERNO)
+    original_cv = cv2.imread(str(ImagePath))
+    overlaid_image = cv2.addWeighted(original_cv, 1 - alpha, heatmap, alpha, 0)
+    cv2.imshow('Density Heatmap', overlaid_image)
+    cv2.imshow('Original Mask', mask_cv) # Also show the mask for comparison
+    print("\nDisplaying heatmap. Press any key in the image window to close.")
+    cv2.waitKey(0) # Wait for the user to press a key
+    cv2.destroyAllWindows() # Close all OpenCV windows
+    return
