@@ -8,7 +8,7 @@ script_directory = Path(__file__).resolve().parent
 
 ImagePath = script_directory / 'Images' / 'image.png'
 PaletteDBPath = script_directory / 'palette.json'
-Task = 'DensityMap'
+Task = 'PatchAnalysis'
 
 ##==Config (Quantize)==##
 
@@ -45,10 +45,8 @@ else:
     custom_palette= 0
 output, imgquantized = analyze_image_colors(ImagePath,ColorAmount,QuantizeAlgorithm,QuantizeToPalette,custom_palette)
 print(output)
-if Task == 'Colorplot':
-    colorplot(output)
-if Task == 'Mask' or Task == 'DensityMap':
-    colorplot(output)
+colorplot(output)
+if Task == 'Mask' or Task == 'DensityMap' or Task == 'PatchAnalysis':
     print("Type in the index of the color to be masked:")
     if QuantizeToPalette == True:
         color_index=int(input("Index: Order of Color in palette.json (Start from 0)"))
@@ -57,3 +55,5 @@ if Task == 'Mask' or Task == 'DensityMap':
     mask_image = masks(imgquantized,color_index)
     if Task == 'DensityMap':
         heatmap(ImagePath, mask_image, KernelSize, Alpha)
+    if Task == 'PatchAnalysis':
+        patchanalysis(mask_image)

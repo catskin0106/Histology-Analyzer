@@ -98,8 +98,38 @@ def heatmap(ImagePath,mask_image,kernel_size,alpha):
     original_cv = cv2.imread(str(ImagePath))
     overlaid_image = cv2.addWeighted(original_cv, 1 - alpha, heatmap, alpha, 0)
     cv2.imshow('Density Heatmap', overlaid_image)
-    cv2.imshow('Original Mask', mask_cv) # Also show the mask for comparison
+    ##cv2.imshow('Original Mask', mask_cv)
     print("\nDisplaying heatmap. Press any key in the image window to close.")
-    cv2.waitKey(0) # Wait for the user to press a key
-    cv2.destroyAllWindows() # Close all OpenCV windows
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     return
+
+def patchanalysis(mask_image):
+    mask_cv = np.array(mask_image)
+    contours, _ = cv2.findContours(mask_cv, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) ##Each contour = patch
+    patch_areas = [cv2.contourArea(c) for c in contours if cv2.contourArea(c) > 0] ##List to store contours with size > 0
+    if not patch_areas:
+        return {
+            'patch_count': 0,
+            'areas': [],
+            'mean_area': 0,
+            'std_dev_area': 0,
+            'min_area': 0,
+            'max_area': 0
+        }
+    patch_stats = {
+        'patch_count': len(patch_areas),
+        'areas': patch_areas,
+        'mean_area': np.mean(patch_areas),
+        'std_dev_area': np.std(patch_areas),
+        'min_area': np.min(patch_areas),
+        'max_area': np.max(patch_areas)
+    }
+    print("\n--- Patch Analysis Report ---")
+    print(f"Total Number of Patches: {patch_stats['patch_count']}")
+    print(f"Average Patch Size (pixels): {patch_stats['mean_area']:.2f}")
+    print(f"Standard Deviation of Size: {patch_stats['std_dev_area']:.2f}")
+    print(f"Smallest Patch Size (pixels): {patch_stats['min_area']:.2f}")
+    print(f"Largest Patch Size (pixels): {patch_stats['max_area']:.2f}")
+    print("-----------------------------")
+    return patch_stats
